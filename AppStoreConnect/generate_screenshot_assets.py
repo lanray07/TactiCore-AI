@@ -5,9 +5,11 @@ import math
 
 ROOT = Path(__file__).resolve().parent
 SCREENSHOT_DIR = ROOT / "Screenshots" / "iPhone_6_5_Display"
+IPAD_DIR = ROOT / "Screenshots" / "iPad_13_Display"
 VISION_DIR = ROOT / "Screenshots" / "Apple_Vision_Pro"
 SUBSCRIPTION_DIR = ROOT / "SubscriptionReviewScreenshots"
 W, H = 1242, 2688
+IW, IH = 2048, 2732
 VW, VH = 3840, 2160
 
 
@@ -44,6 +46,17 @@ VF = {
     "small": font(28),
     "tiny": font(22),
     "num": font(72, True),
+}
+
+IF = {
+    "hero": font(86, True),
+    "h1": font(58, True),
+    "h2": font(42, True),
+    "h3": font(34, True),
+    "body": font(30),
+    "small": font(24),
+    "tiny": font(19),
+    "num": font(56, True),
 }
 
 
@@ -357,6 +370,292 @@ def screenshot_paywall(selected="pro-monthly"):
     return img
 
 
+def ipad_background(asset_name="premium_training_officials"):
+    source_map = {
+        "premium_training_officials": ROOT.parent / "TactiCoreAI" / "Resources" / "Assets.xcassets" / "premium_training_officials.imageset" / "premium_training_officials.png",
+        "premium_tactical_duel": ROOT.parent / "TactiCoreAI" / "Resources" / "Assets.xcassets" / "premium_tactical_duel.imageset" / "premium_tactical_duel.png",
+        "premium_analysis_room": ROOT.parent / "TactiCoreAI" / "Resources" / "Assets.xcassets" / "premium_analysis_room.imageset" / "premium_analysis_room.png",
+        "premium_icon_scene": ROOT.parent / "TactiCoreAI" / "Resources" / "Assets.xcassets" / "premium_icon_scene.imageset" / "premium_icon_scene.png",
+    }
+    source = source_map.get(asset_name)
+    if source and source.exists():
+        photo = Image.open(source).convert("RGB")
+        scale = max(IW / photo.width, IH / photo.height)
+        resized = photo.resize((round(photo.width * scale), round(photo.height * scale)), Image.Resampling.LANCZOS)
+        left = (resized.width - IW) // 2
+        top = (resized.height - IH) // 2
+        img = resized.crop((left, top, left + IW, top + IH))
+        img = ImageEnhance.Color(img).enhance(0.88)
+        img = ImageEnhance.Contrast(img).enhance(1.1)
+        img = Image.blend(img, Image.new("RGB", (IW, IH), "#020604"), 0.34)
+    else:
+        img = Image.new("RGB", (IW, IH), "#06110d")
+
+    overlay = Image.new("RGBA", (IW, IH), (0, 0, 0, 0))
+    d = ImageDraw.Draw(overlay)
+    for i in range(36):
+        y = 170 + i * 76
+        d.line((0, y, IW, y + 150), fill=(43, 255, 167, 12), width=2)
+    for i in range(12):
+        x = -260 + i * 210
+        d.line((x, 0, x + 620, IH), fill=(43, 255, 167, 8), width=2)
+    for cx, cy in [(160, 120), (IW - 180, 180), (IW - 110, IH - 140)]:
+        for r in range(440, 40, -22):
+            alpha = max(0, int(13 * (r / 440)))
+            d.ellipse((cx - r, cy - r, cx + r, cy + r), outline=(70, 255, 180, alpha), width=2)
+
+    vignette = Image.new("L", (IW, IH), 0)
+    vd = ImageDraw.Draw(vignette)
+    vd.ellipse((-520, -220, IW + 520, IH + 260), fill=255)
+    vignette = vignette.filter(ImageFilter.GaussianBlur(135))
+    dark = Image.new("RGBA", (IW, IH), (0, 0, 0, 165))
+    base = Image.composite(img.convert("RGBA"), dark, vignette)
+    return Image.alpha_composite(base, overlay)
+
+
+def ipad_header(draw, title, subtitle="Train like a professional club."):
+    draw.text((96, 94), "TACTICORE AI", fill=(82, 255, 178), font=IF["small"])
+    draw.text((96, 132), title, fill=(248, 252, 249), font=IF["hero"])
+    draw.text((100, 242), subtitle, fill=(194, 214, 205), font=IF["body"])
+
+
+def ipad_card(draw, box, title=None, alpha=214):
+    rounded(draw, box, 34, (8, 22, 18, alpha), outline=(82, 255, 178, 70), width=2)
+    if title:
+        draw.text((box[0] + 34, box[1] + 28), title, fill=(244, 250, 246), font=IF["h3"])
+
+
+def ipad_pill(draw, xy, text, fill=(48, 255, 170, 44), outline=(72, 255, 184, 112)):
+    x, y = xy
+    tw = int(draw.textlength(text, font=IF["small"]))
+    rounded(draw, (x, y, x + tw + 50, y + 50), 25, fill, outline=outline, width=1)
+    draw.text((x + 25, y + 11), text, fill=(225, 253, 238), font=IF["small"])
+    return x + tw + 66
+
+
+def ipad_pitch(draw, box, title=None):
+    x0, y0, x1, y1 = box
+    rounded(draw, box, 36, (4, 42, 27, 232), outline=(96, 255, 188, 96), width=3)
+    if title:
+        draw.text((x0 + 38, y0 + 30), title, fill=(244, 250, 246), font=IF["h3"])
+    field_top = y0 + (96 if title else 42)
+    field_bottom = y1 - 42
+    field_left = x0 + 42
+    field_right = x1 - 42
+    stripe_h = (field_bottom - field_top) / 8
+    for i in range(8):
+        fill = (12, 67, 43, 70) if i % 2 == 0 else (6, 52, 35, 70)
+        draw.rectangle((field_left, field_top + i * stripe_h, field_right, field_top + (i + 1) * stripe_h), fill=fill)
+    draw.rectangle((field_left, field_top, field_right, field_bottom), outline=(205, 255, 229, 94), width=3)
+    mid_y = (field_top + field_bottom) / 2
+    draw.line((field_left, mid_y, field_right, mid_y), fill=(205, 255, 229, 82), width=3)
+    draw.ellipse(((field_left + field_right) / 2 - 110, mid_y - 110, (field_left + field_right) / 2 + 110, mid_y + 110), outline=(205, 255, 229, 82), width=3)
+    draw.rectangle((field_left + 250, field_top, field_right - 250, field_top + 165), outline=(205, 255, 229, 62), width=3)
+    draw.rectangle((field_left + 250, field_bottom - 165, field_right - 250, field_bottom), outline=(205, 255, 229, 62), width=3)
+
+
+def ipad_player(draw, x, y, label, color=(64, 255, 174), size=28):
+    draw.ellipse((x - size, y - size, x + size, y + size), fill=(6, 17, 13), outline=color, width=5)
+    tw = draw.textlength(label, font=IF["tiny"])
+    draw.text((x - tw / 2, y - 13), label, fill=(238, 255, 246), font=IF["tiny"])
+
+
+def ipad_arrow(draw, p1, p2, color=(64, 255, 175, 225), width=8):
+    draw.line((p1, p2), fill=color, width=width)
+    ang = math.atan2(p2[1] - p1[1], p2[0] - p1[0])
+    for delta in (2.55, -2.55):
+        q = (p2[0] + 32 * math.cos(ang + delta), p2[1] + 32 * math.sin(ang + delta))
+        draw.line((p2, q), fill=color, width=width)
+
+
+def ipad_metric(draw, x, y, label, value, width=850):
+    draw.text((x, y), label, fill=(226, 241, 234), font=IF["body"])
+    rounded(draw, (x + 300, y + 10, x + 300 + width, y + 40), 15, (27, 45, 38, 220))
+    rounded(draw, (x + 300, y + 10, int(x + 300 + width * value), y + 40), 15, (65, 255, 174, 218))
+
+
+def ipad_footer(draw, text="The modern operating system for elite football coaching."):
+    draw.text((96, IH - 118), text, fill=(174, 194, 185), font=IF["small"])
+    draw.rectangle((96, IH - 66, IW - 96, IH - 61), fill=(68, 255, 176, 160))
+
+
+def ipad_command_center():
+    img = ipad_background("premium_training_officials")
+    d = ImageDraw.Draw(img)
+    ipad_header(d, "Elite coaching OS")
+    ipad_card(d, (96, 380, 1300, 830), "Training Week")
+    d.text((140, 486), "High press identity", fill=(82, 255, 178), font=IF["h1"])
+    d.text((142, 565), "4 sessions planned. Recovery load balanced.", fill=(214, 232, 223), font=IF["body"])
+    x = 142
+    for label in ["Pressing traps", "Build-up angles", "Transition recovery"]:
+        x = ipad_pill(d, (x, 660), label)
+
+    ipad_card(d, (1340, 380, 1952, 830), "Completion")
+    d.text((1394, 504), "86%", fill=(248, 252, 249), font=IF["num"])
+    d.arc((1640, 486, 1810, 656), -90, 238, fill=(64, 255, 174), width=18)
+    d.text((1396, 646), "Session completion", fill=(180, 203, 192), font=IF["small"])
+
+    ipad_pitch(d, (96, 900, 1952, 1920), "Live Tactical Focus")
+    for x, y, n in [(455, 1390, "6"), (680, 1275, "8"), (915, 1405, "10"), (1240, 1220, "9"), (1445, 1595, "7")]:
+        ipad_player(d, x, y, n)
+    ipad_arrow(d, (680, 1275), (915, 1405))
+    ipad_arrow(d, (915, 1405), (1240, 1220))
+    ipad_arrow(d, (1445, 1595), (1120, 1750), (255, 214, 89, 225))
+
+    ipad_card(d, (96, 1995, 1952, 2510), "AI Coach Insight")
+    d.text((140, 2110), "Wide press timing is strong.", fill=(248, 252, 249), font=IF["h2"])
+    d.text((140, 2180), "Add recovery runs after turnovers and reduce midfield distances.", fill=(180, 203, 192), font=IF["body"])
+    ipad_pill(d, (140, 2300), "Generate Session")
+    ipad_pill(d, (430, 2300), "Voice Notes")
+    ipad_pill(d, (650, 2300), "Tactical Board")
+    ipad_footer(d)
+    return img
+
+
+def ipad_session_builder():
+    img = ipad_background("premium_training_officials")
+    d = ImageDraw.Draw(img)
+    ipad_header(d, "AI session builder")
+    ipad_card(d, (96, 380, 1952, 760), "Coach Inputs")
+    labels = ["U16", "75 min", "18 players", "4-3-3", "High intensity", "Pressing", "Transitions"]
+    x = 142
+    for label in labels:
+        x = ipad_pill(d, (x, 510), label)
+
+    ipad_card(d, (96, 830, 1952, 1310), "AI Generated Plan")
+    stages = [("Warm-up", "Pressing reactions"), ("Technical", "First pass under pressure"), ("Tactical", "Wide trap and counter-press"), ("Game", "8v8 + 3 transition zone")]
+    y = 940
+    for i, (title, desc) in enumerate(stages):
+        x = 150 + (i % 2) * 900
+        yy = y + (i // 2) * 150
+        d.ellipse((x, yy + 8, x + 28, yy + 36), fill=(64, 255, 174))
+        d.text((x + 52, yy), title, fill=(245, 250, 247), font=IF["h3"])
+        d.text((x + 52, yy + 46), desc, fill=(174, 198, 188), font=IF["small"])
+
+    ipad_pitch(d, (96, 1390, 1952, 2440), "Animated Drill Preview")
+    for x, y, n in [(430, 1900, "4"), (660, 1760, "6"), (990, 1610, "8"), (1300, 1770, "11"), (1540, 2060, "9")]:
+        ipad_player(d, x, y, n)
+    ipad_arrow(d, (430, 1900), (660, 1760))
+    ipad_arrow(d, (660, 1760), (990, 1610))
+    ipad_arrow(d, (990, 1610), (1300, 1770))
+    ipad_arrow(d, (1300, 1770), (1540, 2060), (255, 214, 89, 225))
+    ipad_footer(d)
+    return img
+
+
+def ipad_voice_notes():
+    img = ipad_background("premium_analysis_room")
+    d = ImageDraw.Draw(img)
+    ipad_header(d, "Voice coach notes")
+    ipad_card(d, (96, 390, 1952, 1015), "Live Transcription")
+    d.text((145, 505), "We lost control of zone 14 after turnovers.", fill=(248, 252, 249), font=IF["h2"])
+    d.text((145, 575), "Next block should tighten midfield distances and rehearse recovery cues.", fill=(185, 207, 197), font=IF["body"])
+    cy = 810
+    for i in range(72):
+        x = 185 + i * 23
+        amp = 30 + 100 * abs(math.sin(i * 0.48))
+        d.rounded_rectangle((x, cy - amp, x + 10, cy + amp), radius=5, fill=(60, 255, 174, 112 + (i % 4) * 28))
+
+    ipad_card(d, (96, 1090, 1952, 1530), "AI Coaching Summary")
+    y = 1210
+    for p in ["Shape stretched in defensive transition", "Midfield cue: scan, recover, compress", "Next session: counter-press rondo to 8v8 game"]:
+        d.ellipse((145, y + 12, 175, y + 42), fill=(64, 255, 174))
+        d.text((205, y), p, fill=(234, 246, 240), font=IF["body"])
+        y += 92
+
+    ipad_pitch(d, (96, 1600, 1952, 2440), "Voice to Tactical Plan")
+    for x, y, n in [(520, 2040, "8"), (760, 1940, "6"), (1030, 2040, "10"), (1320, 1890, "9"), (1540, 2050, "7")]:
+        ipad_player(d, x, y, n)
+    ipad_arrow(d, (1320, 1890), (1100, 1795), (255, 214, 89, 225))
+    ipad_arrow(d, (760, 1940), (1030, 2040))
+    ipad_arrow(d, (1540, 2050), (1320, 2100))
+    ipad_footer(d, "Voice features request microphone and speech recognition permission.")
+    return img
+
+
+def ipad_tactical_board():
+    img = ipad_background("premium_tactical_duel")
+    d = ImageDraw.Draw(img)
+    ipad_header(d, "Tactical board")
+    ipad_pitch(d, (96, 380, 1952, 1990), "4-3-3 Pressing Pattern")
+    players = [
+        (1025, 590, "1"), (450, 830, "3"), (800, 910, "5"), (1230, 910, "4"), (1590, 830, "2"),
+        (680, 1190, "6"), (1025, 1110, "8"), (1360, 1190, "10"), (540, 1550, "11"), (1025, 1460, "9"), (1500, 1550, "7"),
+    ]
+    for p in players:
+        ipad_player(d, *p)
+    ipad_arrow(d, (1500, 1550), (1310, 1350))
+    ipad_arrow(d, (1025, 1460), (1025, 1285))
+    ipad_arrow(d, (540, 1550), (735, 1355))
+    ipad_arrow(d, (1025, 1110), (1360, 1190), (255, 214, 89, 225))
+
+    ipad_card(d, (96, 2075, 1952, 2510), "Pressing Triggers")
+    x = 145
+    for label in ["Back pass", "Bad first touch", "Wide receive", "Negative body shape"]:
+        x = ipad_pill(d, (x, 2200), label)
+    ipad_footer(d)
+    return img
+
+
+def ipad_player_development():
+    img = ipad_background("premium_tactical_duel")
+    d = ImageDraw.Draw(img)
+    ipad_header(d, "Player development")
+    ipad_card(d, (96, 390, 1952, 850), "Development Alert")
+    d.ellipse((145, 545, 315, 715), fill=(10, 24, 20), outline=(82, 255, 178, 120), width=4)
+    d.text((380, 520), "U16 Midfielder", fill=(248, 252, 249), font=IF["h2"])
+    d.text((382, 590), "Tactical awareness +12%", fill=(82, 255, 178), font=IF["h3"])
+    d.text((382, 655), "Next focus: scan before receiving and protect central lanes.", fill=(185, 207, 197), font=IF["body"])
+    ipad_pill(d, (382, 745), "Confidence rising")
+    ipad_pill(d, (650, 745), "Stamina watch")
+
+    ipad_card(d, (96, 930, 1952, 1540), "Progression Metrics")
+    ipad_metric(d, 145, 1050, "Passing", 0.82)
+    ipad_metric(d, 145, 1156, "Positioning", 0.74)
+    ipad_metric(d, 145, 1262, "Discipline", 0.88)
+    ipad_metric(d, 145, 1368, "Tactical IQ", 0.79)
+
+    ipad_card(d, (96, 1620, 1952, 2440), "Squad Growth Trends")
+    bars = [260, 420, 350, 530, 460, 500]
+    labels = ["Press", "Poss", "Trans", "Def", "Finish", "Load"]
+    for i, h in enumerate(bars):
+        x = 260 + i * 270
+        rounded(d, (x, 2220 - h, x + 116, 2220), 24, (64, 255, 174, 216))
+        d.text((x - 18, 2265), labels[i], fill=(184, 207, 196), font=IF["small"])
+    d.text((145, 1740), "AI recommends a compactness block before the next match.", fill=(248, 252, 249), font=IF["h2"])
+    d.text((145, 1810), "Use two transition games and one low-load recovery shape review.", fill=(185, 207, 197), font=IF["body"])
+    ipad_footer(d)
+    return img
+
+
+def ipad_paywall():
+    img = ipad_background("premium_icon_scene")
+    d = ImageDraw.Draw(img)
+    ipad_header(d, "Pro coaching power", "Unlock voice planning, tactical boards, animated drills and premium exports.")
+    plans = [
+        ("Pro Coach Monthly", "$14.99", "Unlimited AI sessions and voice notes", True),
+        ("Pro Coach Yearly", "$119.99", "Season-long planning with premium exports", False),
+        ("Elite Club Monthly", "$49.99", "Academy workflows and advanced tracking", False),
+    ]
+    y = 470
+    for name, price, desc, active in plans:
+        fill = (21, 48, 38, 236) if active else (9, 24, 20, 218)
+        outline = (82, 255, 178, 210) if active else (82, 255, 178, 76)
+        rounded(d, (96, y, 1952, y + 480), 42, fill, outline=outline, width=3)
+        d.text((150, y + 70), name, fill=(248, 252, 249), font=IF["h2"])
+        d.text((150, y + 150), desc, fill=(184, 207, 196), font=IF["body"])
+        d.text((150, y + 275), price, fill=(82, 255, 178), font=IF["num"])
+        if active:
+            rounded(d, (1600, y + 82, 1840, y + 144), 31, (67, 255, 174, 230))
+            d.text((1655, y + 98), "Selected", fill=(5, 17, 12), font=IF["small"])
+        y += 550
+
+    rounded(d, (430, 2260, 1618, 2370), 55, (62, 255, 174, 238))
+    d.text((848, 2290), "Continue", fill=(3, 20, 12), font=IF["h2"])
+    ipad_footer(d, "Coaching and educational tool only. Review AI recommendations.")
+    return img
+
+
 def vision_background(asset_name="premium_training_officials"):
     source_map = {
         "premium_training_officials": ROOT.parent / "TactiCoreAI" / "Resources" / "Assets.xcassets" / "premium_training_officials.imageset" / "premium_training_officials.png",
@@ -639,6 +938,7 @@ def vision_paywall():
 
 def save_all():
     SCREENSHOT_DIR.mkdir(parents=True, exist_ok=True)
+    IPAD_DIR.mkdir(parents=True, exist_ok=True)
     VISION_DIR.mkdir(parents=True, exist_ok=True)
     SUBSCRIPTION_DIR.mkdir(parents=True, exist_ok=True)
     screenshots = [
@@ -651,6 +951,17 @@ def save_all():
     ]
     for name, image in screenshots:
         image.convert("RGB").save(SCREENSHOT_DIR / name, optimize=True)
+
+    ipad_screenshots = [
+        ("01_ipad_command_center.png", ipad_command_center()),
+        ("02_ipad_ai_session_builder.png", ipad_session_builder()),
+        ("03_ipad_voice_coach_notes.png", ipad_voice_notes()),
+        ("04_ipad_tactical_board.png", ipad_tactical_board()),
+        ("05_ipad_player_development.png", ipad_player_development()),
+        ("06_ipad_paywall.png", ipad_paywall()),
+    ]
+    for name, image in ipad_screenshots:
+        image.convert("RGB").save(IPAD_DIR / name, optimize=True)
 
     vision_screenshots = [
         ("01_spatial_command_center.png", vision_command_center()),
@@ -674,5 +985,6 @@ def save_all():
 if __name__ == "__main__":
     save_all()
     print(f"Created assets in {SCREENSHOT_DIR}")
+    print(f"Created assets in {IPAD_DIR}")
     print(f"Created assets in {VISION_DIR}")
     print(f"Created assets in {SUBSCRIPTION_DIR}")
