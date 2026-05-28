@@ -148,8 +148,7 @@ jobs:
 
           /usr/libexec/PlistBuddy -c "Delete :CFBundleIcons" "$APP_INFO_PLIST" 2>/dev/null || true
           /usr/libexec/PlistBuddy -c "Add :CFBundleIcons dict" "$APP_INFO_PLIST"
-          /usr/libexec/PlistBuddy -c "Add :CFBundleIcons:CFBundlePrimaryIcon dict" "$APP_INFO_PLIST"
-          /usr/libexec/PlistBuddy -c "Add :CFBundleIcons:CFBundlePrimaryIcon:CFBundleIconName string AppIcon" "$APP_INFO_PLIST"
+          /usr/libexec/PlistBuddy -c "Add :CFBundleIcons:CFBundlePrimaryIcon string AppIcon" "$APP_INFO_PLIST"
           /usr/libexec/PlistBuddy -c "Print :CFBundleIcons" "$APP_INFO_PLIST"
 
       - name: Create visionOS export options
