@@ -178,7 +178,15 @@ Set Elite Club as the higher level than Pro Coach because it includes the broade
 
 ## App Store Review Attachments
 
-Screenshots are still required before final submission. Capture iPhone 6.9-inch and 6.5-inch/6.7-inch screenshots from:
+Generated screenshot assets are available in:
+
+- `AppStoreConnect/Screenshots/iPhone_6_5_Display`
+- `AppStoreConnect/Screenshots/Apple_Vision_Pro`
+- `AppStoreConnect/SubscriptionReviewScreenshots`
+
+The Apple Vision Pro set is exported at 3840 x 2160 and uses the app's premium humanized football imagery placeholders, including footballers, coaches, sideline officials, training-ground photography, tactical overlays, and cinematic pitch atmosphere.
+
+Use screenshots that cover:
 
 1. Onboarding identity setup
 2. Dashboard
@@ -188,7 +196,7 @@ Screenshots are still required before final submission. Capture iPhone 6.9-inch 
 6. Player Development
 7. Analytics or Paywall
 
-Avoid using third-party club badges, player likenesses, league marks, or UEFA/EA-style names in screenshots.
+Avoid using third-party club badges, identifiable real-player likenesses, league marks, or UEFA/EA-style names in screenshots.
 
 ## Source References
 

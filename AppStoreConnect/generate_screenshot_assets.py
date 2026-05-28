@@ -5,8 +5,10 @@ import math
 
 ROOT = Path(__file__).resolve().parent
 SCREENSHOT_DIR = ROOT / "Screenshots" / "iPhone_6_5_Display"
+VISION_DIR = ROOT / "Screenshots" / "Apple_Vision_Pro"
 SUBSCRIPTION_DIR = ROOT / "SubscriptionReviewScreenshots"
 W, H = 1242, 2688
+VW, VH = 3840, 2160
 
 
 def font(size, bold=False):
@@ -31,6 +33,17 @@ F = {
     "small": font(23),
     "tiny": font(18),
     "num": font(50, True),
+}
+
+VF = {
+    "hero": font(122, True),
+    "h1": font(76, True),
+    "h2": font(54, True),
+    "h3": font(40, True),
+    "body": font(35),
+    "small": font(28),
+    "tiny": font(22),
+    "num": font(72, True),
 }
 
 
@@ -344,8 +357,289 @@ def screenshot_paywall(selected="pro-monthly"):
     return img
 
 
+def vision_background(asset_name="premium_training_officials"):
+    source_map = {
+        "premium_training_officials": ROOT.parent / "TactiCoreAI" / "Resources" / "Assets.xcassets" / "premium_training_officials.imageset" / "premium_training_officials.png",
+        "premium_tactical_duel": ROOT.parent / "TactiCoreAI" / "Resources" / "Assets.xcassets" / "premium_tactical_duel.imageset" / "premium_tactical_duel.png",
+        "premium_analysis_room": ROOT.parent / "TactiCoreAI" / "Resources" / "Assets.xcassets" / "premium_analysis_room.imageset" / "premium_analysis_room.png",
+        "premium_icon_scene": ROOT.parent / "TactiCoreAI" / "Resources" / "Assets.xcassets" / "premium_icon_scene.imageset" / "premium_icon_scene.png",
+    }
+    source = source_map.get(asset_name)
+    if source and source.exists():
+        photo = Image.open(source).convert("RGB")
+        scale = max(VW / photo.width, VH / photo.height)
+        resized = photo.resize((round(photo.width * scale), round(photo.height * scale)), Image.Resampling.LANCZOS)
+        left = (resized.width - VW) // 2
+        top = (resized.height - VH) // 2
+        img = resized.crop((left, top, left + VW, top + VH))
+        img = ImageEnhance.Color(img).enhance(0.9)
+        img = ImageEnhance.Contrast(img).enhance(1.12)
+        img = Image.blend(img, Image.new("RGB", (VW, VH), "#020604"), 0.28)
+    else:
+        img = Image.new("RGB", (VW, VH), "#05110c")
+        d = ImageDraw.Draw(img)
+        for y in range(0, VH, 12):
+            shade = int(8 + 28 * (1 - y / VH))
+            d.rectangle((0, y, VW, y + 12), fill=(3, shade, 12))
+
+    overlay = Image.new("RGBA", (VW, VH), (0, 0, 0, 0))
+    d = ImageDraw.Draw(overlay)
+    for i in range(44):
+        y = 120 + i * 62
+        d.line((0, y, VW, y + 210), fill=(55, 255, 178, 10), width=3)
+    for i in range(18):
+        x = -480 + i * 300
+        d.line((x, 0, x + 860, VH), fill=(55, 255, 178, 7), width=3)
+    for cx, cy in [(620, 310), (VW - 540, 260), (VW - 460, VH - 180)]:
+        for r in range(520, 40, -26):
+            alpha = max(0, int(13 * (r / 520)))
+            d.ellipse((cx - r, cy - r, cx + r, cy + r), outline=(70, 255, 180, alpha), width=3)
+
+    vignette = Image.new("L", (VW, VH), 0)
+    vd = ImageDraw.Draw(vignette)
+    vd.ellipse((-780, -430, VW + 780, VH + 420), fill=255)
+    vignette = vignette.filter(ImageFilter.GaussianBlur(170))
+    dark = Image.new("RGBA", (VW, VH), (0, 0, 0, 178))
+    base = Image.composite(img.convert("RGBA"), dark, vignette)
+    return Image.alpha_composite(base, overlay)
+
+
+def vision_header(draw, title, subtitle="Train like a professional club."):
+    draw.text((170, 128), "TACTICORE AI", fill=(82, 255, 178), font=VF["small"])
+    draw.text((170, 175), title, fill=(248, 252, 249), font=VF["hero"])
+    draw.text((176, 322), subtitle, fill=(194, 214, 205), font=VF["body"])
+
+
+def vision_card(draw, box, title=None, alpha=214):
+    rounded(draw, box, 44, (8, 22, 18, alpha), outline=(82, 255, 178, 72), width=3)
+    if title:
+        draw.text((box[0] + 44, box[1] + 34), title, fill=(244, 250, 246), font=VF["h3"])
+
+
+def vision_pill(draw, xy, text, fill=(48, 255, 170, 44), outline=(72, 255, 184, 118)):
+    x, y = xy
+    tw = int(draw.textlength(text, font=VF["small"]))
+    rounded(draw, (x, y, x + tw + 58, y + 58), 29, fill, outline=outline, width=2)
+    draw.text((x + 29, y + 13), text, fill=(225, 253, 238), font=VF["small"])
+    return x + tw + 78
+
+
+def vision_footer(draw, text="The modern operating system for elite football coaching."):
+    draw.text((170, VH - 132), text, fill=(174, 194, 185), font=VF["small"])
+    draw.rectangle((170, VH - 74, VW - 170, VH - 68), fill=(68, 255, 176, 160))
+
+
+def vision_pitch(draw, box, title=None):
+    x0, y0, x1, y1 = box
+    rounded(draw, box, 48, (4, 42, 27, 230), outline=(96, 255, 188, 105), width=4)
+    if title:
+        draw.text((x0 + 54, y0 + 38), title, fill=(244, 250, 246), font=VF["h3"])
+    field_top = y0 + (120 if title else 54)
+    field_bottom = y1 - 54
+    field_left = x0 + 58
+    field_right = x1 - 58
+    stripe_h = (field_bottom - field_top) / 8
+    for i in range(8):
+        fill = (12, 67, 43, 75) if i % 2 == 0 else (6, 52, 35, 75)
+        draw.rectangle((field_left, field_top + i * stripe_h, field_right, field_top + (i + 1) * stripe_h), fill=fill)
+    draw.rectangle((field_left, field_top, field_right, field_bottom), outline=(205, 255, 229, 105), width=4)
+    mid_y = (field_top + field_bottom) / 2
+    draw.line((field_left, mid_y, field_right, mid_y), fill=(205, 255, 229, 95), width=4)
+    draw.ellipse(((field_left + field_right) / 2 - 150, mid_y - 150, (field_left + field_right) / 2 + 150, mid_y + 150), outline=(205, 255, 229, 95), width=4)
+    draw.rectangle((field_left + 420, field_top, field_right - 420, field_top + 220), outline=(205, 255, 229, 72), width=4)
+    draw.rectangle((field_left + 420, field_bottom - 220, field_right - 420, field_bottom), outline=(205, 255, 229, 72), width=4)
+
+
+def vision_player(draw, x, y, label, color=(64, 255, 174), size=38):
+    glow = Image.new("RGBA", (VW, VH), (0, 0, 0, 0))
+    gd = ImageDraw.Draw(glow)
+    gd.ellipse((x - size * 2.2, y - size * 2.2, x + size * 2.2, y + size * 2.2), fill=(color[0], color[1], color[2], 24))
+    glow = glow.filter(ImageFilter.GaussianBlur(18))
+    draw.bitmap((0, 0), glow.split()[-1], fill=(color[0], color[1], color[2], 42))
+    draw.ellipse((x - size, y - size, x + size, y + size), fill=(6, 17, 13), outline=color, width=6)
+    tw = draw.textlength(label, font=VF["tiny"])
+    draw.text((x - tw / 2, y - 14), label, fill=(238, 255, 246), font=VF["tiny"])
+
+
+def vision_arrow(draw, p1, p2, color=(64, 255, 175, 225), width=10):
+    draw.line((p1, p2), fill=color, width=width)
+    ang = math.atan2(p2[1] - p1[1], p2[0] - p1[0])
+    for delta in (2.55, -2.55):
+        q = (p2[0] + 42 * math.cos(ang + delta), p2[1] + 42 * math.sin(ang + delta))
+        draw.line((p2, q), fill=color, width=width)
+
+
+def vision_metric(draw, x, y, label, value, width=660):
+    draw.text((x, y), label, fill=(226, 241, 234), font=VF["body"])
+    rounded(draw, (x + 310, y + 11, x + 310 + width, y + 44), 17, (27, 45, 38, 220))
+    rounded(draw, (x + 310, y + 11, int(x + 310 + width * value), y + 44), 17, (65, 255, 174, 218))
+
+
+def vision_command_center():
+    img = vision_background("premium_training_officials")
+    d = ImageDraw.Draw(img)
+    vision_header(d, "Spatial coaching command center")
+    vision_card(d, (170, 520, 1450, 1120), "Training Week")
+    d.text((222, 632), "High press identity", fill=(82, 255, 178), font=VF["h1"])
+    d.text((226, 732), "4 sessions planned. Recovery load balanced.", fill=(214, 232, 223), font=VF["body"])
+    x = 226
+    for label in ["Pressing traps", "Build-up angles", "Transition recovery"]:
+        x = vision_pill(d, (x, 852), label)
+
+    vision_card(d, (1540, 520, 2380, 1120), "Completion")
+    d.text((1610, 674), "86%", fill=(248, 252, 249), font=VF["num"])
+    d.arc((1970, 646, 2224, 900), -90, 238, fill=(64, 255, 174), width=24)
+    d.text((1614, 820), "Session completion", fill=(180, 203, 192), font=VF["small"])
+
+    vision_card(d, (2480, 520, 3670, 1120), "AI Coach Insight")
+    d.text((2534, 656), "Wide press timing is strong.", fill=(248, 252, 249), font=VF["h3"])
+    d.text((2534, 730), "Add recovery runs after turnovers and reduce midfield distances.", fill=(180, 203, 192), font=VF["body"])
+    vision_pill(d, (2534, 850), "Next priority")
+
+    vision_pitch(d, (170, 1225, 2380, 1940), "Live Tactical Focus")
+    for x, y, n in [(590, 1580, "6"), (850, 1485, "8"), (1130, 1590, "10"), (1505, 1435, "9"), (1710, 1740, "7")]:
+        vision_player(d, x, y, n)
+    vision_arrow(d, (850, 1485), (1130, 1590))
+    vision_arrow(d, (1130, 1590), (1505, 1435))
+    vision_arrow(d, (1710, 1740), (1320, 1845), (255, 214, 89, 225))
+
+    vision_card(d, (2480, 1225, 3670, 1940), "Coach Actions")
+    y = 1365
+    for label, detail in [
+        ("Generate Session", "Build a pro-level training plan"),
+        ("Voice Notes", "Turn sideline thoughts into structure"),
+        ("Tactical Board", "Animate shape, triggers and transitions"),
+        ("Player Development", "Spot growth and next-focus alerts"),
+    ]:
+        d.text((2534, y), label, fill=(246, 252, 248), font=VF["h3"])
+        d.text((2534, y + 56), detail, fill=(177, 201, 190), font=VF["small"])
+        y += 132
+    vision_footer(d)
+    return img
+
+
+def vision_tactical_board():
+    img = vision_background("premium_tactical_duel")
+    d = ImageDraw.Draw(img)
+    vision_header(d, "Elite tactical board", "Animate pressing triggers, transitions and set-piece patterns.")
+    vision_card(d, (170, 520, 1120, 1885), "Pattern Controls")
+    for y, title, value in [
+        (660, "Formation", "4-3-3 high press"),
+        (820, "Trigger", "Back pass to fullback"),
+        (980, "Transition", "Counter-press within 6 sec"),
+        (1140, "Set Piece", "Near-post decoy run"),
+    ]:
+        d.text((226, y), title, fill=(177, 201, 190), font=VF["small"])
+        d.text((226, y + 44), value, fill=(246, 252, 248), font=VF["h3"])
+    x = 226
+    for label in ["Press", "Recover", "Switch"]:
+        x = vision_pill(d, (x, 1370), label)
+
+    vision_pitch(d, (1230, 520, 3670, 1885), "4-3-3 Pressing Simulation")
+    players = [
+        (2440, 720, "1"), (1740, 940, "3"), (2190, 1020, "5"), (2670, 1020, "4"), (3150, 940, "2"),
+        (2000, 1260, "6"), (2440, 1180, "8"), (2860, 1260, "10"), (1840, 1585, "11"), (2440, 1510, "9"), (3040, 1585, "7"),
+    ]
+    for p in players:
+        vision_player(d, *p)
+    vision_arrow(d, (3040, 1585), (2810, 1405))
+    vision_arrow(d, (2440, 1510), (2440, 1350))
+    vision_arrow(d, (1840, 1585), (2090, 1410))
+    vision_arrow(d, (2440, 1180), (2860, 1260), (255, 214, 89, 225))
+    vision_footer(d)
+    return img
+
+
+def vision_voice_room():
+    img = vision_background("premium_analysis_room")
+    d = ImageDraw.Draw(img)
+    vision_header(d, "Voice coaching studio", "Dictate observations. Convert them into plans, notes and player feedback.")
+    vision_card(d, (170, 540, 1795, 1185), "Live Transcription")
+    d.text((230, 676), "We lost control of zone 14 after turnovers.", fill=(248, 252, 249), font=VF["h2"])
+    d.text((230, 762), "Next block should tighten midfield distances and rehearse recovery cues.", fill=(185, 207, 197), font=VF["body"])
+    cy = 1010
+    for i in range(72):
+        x = 250 + i * 20
+        amp = 32 + 118 * abs(math.sin(i * 0.45))
+        d.rounded_rectangle((x, cy - amp, x + 9, cy + amp), radius=5, fill=(60, 255, 174, 118 + (i % 4) * 28))
+
+    vision_card(d, (1910, 540, 3670, 1185), "AI Coaching Summary")
+    y = 690
+    for p in ["Shape stretched in defensive transition", "Midfield cue: scan, recover, compress", "Next session: counter-press rondo to 8v8 game"]:
+        d.ellipse((1974, y + 12, 2008, y + 46), fill=(64, 255, 174))
+        d.text((2040, y), p, fill=(234, 246, 240), font=VF["body"])
+        y += 118
+
+    vision_pitch(d, (170, 1305, 3670, 1910), "Voice to Tactical Plan")
+    for x, y, n in [(980, 1640, "8"), (1420, 1540, "6"), (1900, 1640, "10"), (2400, 1500, "9"), (2840, 1650, "7")]:
+        vision_player(d, x, y, n)
+    vision_arrow(d, (2400, 1500), (2030, 1395), (255, 214, 89, 225))
+    vision_arrow(d, (1420, 1540), (1900, 1640))
+    vision_arrow(d, (2840, 1650), (2440, 1710))
+    vision_footer(d, "Voice features request microphone and speech recognition permission.")
+    return img
+
+
+def vision_player_development_wall():
+    img = vision_background("premium_tactical_duel")
+    d = ImageDraw.Draw(img)
+    vision_header(d, "Player development wall")
+    vision_card(d, (170, 520, 1330, 1880), "Development Alert")
+    d.ellipse((260, 680, 510, 930), fill=(10, 24, 20), outline=(82, 255, 178, 120), width=5)
+    d.text((568, 692), "U16 Midfielder", fill=(248, 252, 249), font=VF["h2"])
+    d.text((570, 782), "Tactical awareness +12%", fill=(82, 255, 178), font=VF["h3"])
+    d.text((570, 852), "Next focus: scan before receiving and protect central lanes.", fill=(185, 207, 197), font=VF["small"])
+    vision_pill(d, (570, 974), "Confidence rising")
+    vision_pill(d, (570, 1050), "Stamina watch")
+    vision_metric(d, 250, 1230, "Passing", 0.82, 600)
+    vision_metric(d, 250, 1338, "Positioning", 0.74, 600)
+    vision_metric(d, 250, 1446, "Discipline", 0.88, 600)
+    vision_metric(d, 250, 1554, "Tactical IQ", 0.79, 600)
+
+    vision_card(d, (1450, 520, 3670, 1880), "Squad Growth Trends")
+    bars = [420, 610, 520, 760, 650, 705]
+    labels = ["Press", "Poss", "Trans", "Def", "Finish", "Load"]
+    for i, h in enumerate(bars):
+        x = 1640 + i * 295
+        rounded(d, (x, 1580 - h, x + 128, 1580), 28, (64, 255, 174, 216))
+        d.text((x - 18, 1640), labels[i], fill=(184, 207, 196), font=VF["small"])
+    d.text((1600, 690), "AI recommends a compactness block before the next match.", fill=(248, 252, 249), font=VF["h2"])
+    d.text((1600, 785), "Use two transition games and one low-load recovery shape review.", fill=(185, 207, 197), font=VF["body"])
+    vision_footer(d)
+    return img
+
+
+def vision_paywall():
+    img = vision_background("premium_icon_scene")
+    d = ImageDraw.Draw(img)
+    vision_header(d, "Unlock the elite club workflow", "Unlimited AI planning, tactical boards, voice input and premium exports.")
+    plans = [
+        ("Pro Coach Monthly", "$14.99", "Unlimited AI sessions and voice notes", 170),
+        ("Pro Coach Yearly", "$119.99", "Season-long planning with premium exports", 1390),
+        ("Elite Club Monthly", "$49.99", "Academy workflows and advanced tracking", 2610),
+    ]
+    for name, price, desc, x in plans:
+        active = name == "Pro Coach Monthly"
+        fill = (21, 48, 38, 236) if active else (9, 24, 20, 218)
+        outline = (82, 255, 178, 210) if active else (82, 255, 178, 76)
+        rounded(d, (x, 600, x + 1060, 1480), 52, fill, outline=outline, width=4)
+        d.text((x + 70, 706), name, fill=(248, 252, 249), font=VF["h2"])
+        d.text((x + 70, 806), desc, fill=(184, 207, 196), font=VF["body"])
+        d.text((x + 70, 994), price, fill=(82, 255, 178), font=VF["num"])
+        d.text((x + 70, 1160), "Coaching and educational tool only.", fill=(184, 207, 196), font=VF["small"])
+        if active:
+            rounded(d, (x + 710, 708, x + 970, 778), 35, (67, 255, 174, 230))
+            d.text((x + 760, 725), "Selected", fill=(5, 17, 12), font=VF["small"])
+
+    rounded(d, (1290, 1640, 2550, 1755), 58, (62, 255, 174, 238))
+    d.text((1690, 1669), "Continue", fill=(3, 20, 12), font=VF["h2"])
+    vision_footer(d, "Review AI recommendations and adapt them to your players and club policies.")
+    return img
+
+
 def save_all():
     SCREENSHOT_DIR.mkdir(parents=True, exist_ok=True)
+    VISION_DIR.mkdir(parents=True, exist_ok=True)
     SUBSCRIPTION_DIR.mkdir(parents=True, exist_ok=True)
     screenshots = [
         ("01_dashboard.png", screenshot_dashboard()),
@@ -357,6 +651,16 @@ def save_all():
     ]
     for name, image in screenshots:
         image.convert("RGB").save(SCREENSHOT_DIR / name, optimize=True)
+
+    vision_screenshots = [
+        ("01_spatial_command_center.png", vision_command_center()),
+        ("02_elite_tactical_board.png", vision_tactical_board()),
+        ("03_voice_coaching_studio.png", vision_voice_room()),
+        ("04_player_development_wall.png", vision_player_development_wall()),
+        ("05_visionos_paywall.png", vision_paywall()),
+    ]
+    for name, image in vision_screenshots:
+        image.convert("RGB").save(VISION_DIR / name, optimize=True)
 
     subscription_images = [
         ("pro_coach_monthly_review.png", screenshot_paywall("pro-monthly")),
@@ -370,4 +674,5 @@ def save_all():
 if __name__ == "__main__":
     save_all()
     print(f"Created assets in {SCREENSHOT_DIR}")
+    print(f"Created assets in {VISION_DIR}")
     print(f"Created assets in {SUBSCRIPTION_DIR}")
