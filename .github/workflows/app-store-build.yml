@@ -27,7 +27,7 @@ concurrency:
 jobs:
   archive-and-upload:
     name: Archive and Upload
-    runs-on: macos-15
+    runs-on: macos-26
     timeout-minutes: 75
 
     env:
@@ -44,6 +44,17 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+
+      - name: Select Xcode 26
+        shell: bash
+        run: |
+          set -euo pipefail
+          XCODE_APP="$(/bin/ls -d /Applications/Xcode_26*.app 2>/dev/null | sort | tail -n 1)"
+          if [ -z "$XCODE_APP" ]; then
+            echo "::error title=Xcode 26 not found::The macOS runner does not have an Xcode 26 installation."
+            exit 1
+          fi
+          sudo xcode-select -s "$XCODE_APP/Contents/Developer"
 
       - name: Show Xcode version
         run: |
