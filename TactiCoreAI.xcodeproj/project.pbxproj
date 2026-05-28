@@ -376,6 +376,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "TactiCore AI";
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.sports";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "TactiCore AI uses the microphone so coaches can dictate session ideas, match notes, and coaching observations.";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "TactiCore AI uses speech recognition to convert coaching voice notes into structured training content.";
@@ -411,6 +412,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "TactiCore AI";
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.sports";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "TactiCore AI uses the microphone so coaches can dictate session ideas, match notes, and coaching observations.";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "TactiCore AI uses speech recognition to convert coaching voice notes into structured training content.";
