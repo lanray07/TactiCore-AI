@@ -103,7 +103,9 @@ jobs:
           set -euo pipefail
           BUILD_NUMBER="${REQUESTED_BUILD_NUMBER:-$GITHUB_RUN_NUMBER}"
           ARCHIVE_PATH="$RUNNER_TEMP/TactiCoreAI-visionOS.xcarchive"
+          ARCHIVE_LOG="$RUNNER_TEMP/visionos-archive.log"
 
+          set +e
           xcodebuild archive \
             -project "$PROJECT_PATH" \
             -scheme "$SCHEME" \
@@ -119,7 +121,17 @@ jobs:
             XROS_DEPLOYMENT_TARGET=2.0 \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
-            CODE_SIGN_IDENTITY=""
+            CODE_SIGN_IDENTITY="" \
+            -quiet 2>&1 | tee "$ARCHIVE_LOG"
+          ARCHIVE_STATUS=${PIPESTATUS[0]}
+          set -e
+
+          if [ "$ARCHIVE_STATUS" -ne 0 ]; then
+            echo "::group::visionOS archive errors"
+            grep -n -E "error:|fatal error:|warning:|unavailable|cannot find|failed|requires" "$ARCHIVE_LOG" || tail -n 200 "$ARCHIVE_LOG"
+            echo "::endgroup::"
+            exit "$ARCHIVE_STATUS"
+          fi
 
           echo "ARCHIVE_PATH=$ARCHIVE_PATH" >> "$GITHUB_ENV"
           echo "BUILD_NUMBER=$BUILD_NUMBER" >> "$GITHUB_ENV"
