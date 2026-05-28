@@ -271,7 +271,7 @@ struct LoadingStateView: View {
         PremiumContainer(accent: .tactiCoreNeon) {
             HStack(spacing: 14) {
                 ProgressView()
-                    .tint(.tactiCoreNeon)
+                    .tint(Color.tactiCoreNeon)
                 Text(title)
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(.white.opacity(0.82))
@@ -291,7 +291,7 @@ struct EmptyStateView: View {
             VStack(spacing: 12) {
                 Image(systemName: systemImage)
                     .font(.system(size: 30, weight: .bold))
-                    .foregroundStyle(.tactiCoreNeon)
+                    .foregroundStyle(Color.tactiCoreNeon)
                 Text(title)
                     .font(.headline.weight(.black))
                     .foregroundStyle(.white)
@@ -312,7 +312,7 @@ struct ErrorStateView: View {
         PremiumContainer(accent: .tactiCoreRed) {
             HStack(spacing: 12) {
                 Image(systemName: "exclamationmark.triangle.fill")
-                    .foregroundStyle(.tactiCoreRed)
+                    .foregroundStyle(Color.tactiCoreRed)
                 Text(message)
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(.white.opacity(0.82))

@@ -50,7 +50,7 @@ struct OnboardingView: View {
                             ForEach(viewModel.frequencies, id: \.self) { Text($0).tag($0) }
                         }
                         .pickerStyle(.menu)
-                        .tint(.tactiCoreNeon)
+                        .tint(Color.tactiCoreNeon)
                     }
 
                     Toggle(isOn: $viewModel.notificationsEnabled) {
@@ -62,7 +62,7 @@ struct OnboardingView: View {
                                 .foregroundStyle(.white.opacity(0.62))
                         }
                     }
-                    .tint(.tactiCoreNeon)
+                    .tint(Color.tactiCoreNeon)
                     .padding(16)
                     .background(.white.opacity(0.08), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
 

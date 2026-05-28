@@ -21,7 +21,7 @@ struct TactiCoreWidgetPlaceholderView: View {
         VStack(alignment: .leading, spacing: 8) {
             Text("TACTICORE AI")
                 .font(.caption2.weight(.black))
-                .foregroundStyle(.tactiCoreNeon)
+                .foregroundStyle(Color.tactiCoreNeon)
             Text(entry.title)
                 .font(.headline.weight(.black))
             Text(entry.tacticalFocus)
@@ -31,7 +31,7 @@ struct TactiCoreWidgetPlaceholderView: View {
                 .foregroundStyle(.secondary)
         }
         .padding()
-        .background(.tactiCoreInk)
+        .background(Color.tactiCoreInk)
     }
 }
 

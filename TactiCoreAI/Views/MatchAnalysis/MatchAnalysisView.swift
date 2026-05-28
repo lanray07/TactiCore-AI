@@ -51,7 +51,7 @@ struct MatchAnalysisView: View {
                     ForEach(TacticalStyle.allCases) { Text($0.rawValue).tag($0) }
                 }
                 .pickerStyle(.menu)
-                .tint(.tactiCoreNeon)
+                .tint(Color.tactiCoreNeon)
 
                 TextEditor(text: $viewModel.notes)
                     .frame(minHeight: 170)

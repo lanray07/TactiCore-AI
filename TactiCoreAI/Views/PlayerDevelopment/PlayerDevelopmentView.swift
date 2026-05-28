@@ -70,7 +70,7 @@ struct PlayerDevelopmentView: View {
                             .foregroundStyle(.white)
                         Text(player.position)
                             .font(.caption.weight(.black))
-                            .foregroundStyle(.tactiCoreNeon)
+                            .foregroundStyle(Color.tactiCoreNeon)
                         Text(player.latestInsight)
                             .font(.caption)
                             .foregroundStyle(.white.opacity(0.66))

@@ -21,7 +21,7 @@ struct AICoachingAssistantView: View {
                                 ForEach(AssistantMode.allCases) { Text($0.rawValue).tag($0) }
                             }
                             .pickerStyle(.menu)
-                            .tint(.tactiCoreNeon)
+                            .tint(Color.tactiCoreNeon)
 
                             TextEditor(text: $viewModel.prompt)
                                 .frame(minHeight: 140)

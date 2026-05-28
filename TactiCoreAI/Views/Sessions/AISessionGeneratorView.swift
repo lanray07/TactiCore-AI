@@ -65,7 +65,7 @@ struct AISessionGeneratorView: View {
                         .font(.caption.weight(.black))
                         .foregroundStyle(.white.opacity(0.64))
                     Slider(value: $viewModel.duration, in: 45...120, step: 5)
-                        .tint(.tactiCoreNeon)
+                        .tint(Color.tactiCoreNeon)
                 }
 
                 VStack(alignment: .leading, spacing: 8) {
@@ -73,7 +73,7 @@ struct AISessionGeneratorView: View {
                         .font(.caption.weight(.black))
                         .foregroundStyle(.white.opacity(0.64))
                     Slider(value: $viewModel.playerCount, in: 8...24, step: 1)
-                        .tint(.tactiCoreBlue)
+                        .tint(Color.tactiCoreBlue)
                 }
 
                 Picker("Intensity", selection: $viewModel.fitnessIntensity) {
@@ -107,7 +107,7 @@ struct AISessionGeneratorView: View {
                 ForEach(values, id: \.self) { Text($0).tag($0) }
             }
             .pickerStyle(.menu)
-            .tint(.tactiCoreNeon)
+            .tint(Color.tactiCoreNeon)
         }
     }
 

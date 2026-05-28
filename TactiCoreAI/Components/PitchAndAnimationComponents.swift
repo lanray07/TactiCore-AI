@@ -51,7 +51,7 @@ struct TacticalBoardView: View {
         .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 8, style: .continuous)
-                .stroke(.tactiCoreNeon.opacity(0.25), lineWidth: 1)
+                .stroke(Color.tactiCoreNeon.opacity(0.25), lineWidth: 1)
         )
     }
 }
@@ -163,7 +163,7 @@ struct DrillAnimationCard: View {
                     Spacer()
                     Image(systemName: "play.circle.fill")
                         .font(.title2)
-                        .foregroundStyle(.tactiCoreNeon)
+                        .foregroundStyle(Color.tactiCoreNeon)
                 }
 
                 TimelineView(.animation) { timeline in

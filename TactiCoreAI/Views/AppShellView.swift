@@ -83,7 +83,7 @@ struct MainTabShell: View {
                 .tag(tab)
             }
         }
-        .tint(.tactiCoreNeon)
+        .tint(Color.tactiCoreNeon)
     }
 
     @ViewBuilder

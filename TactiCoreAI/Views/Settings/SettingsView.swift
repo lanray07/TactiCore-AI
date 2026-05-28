@@ -39,8 +39,8 @@ struct SettingsView: View {
                     }
 
                     settingsSection("Voice settings") {
-                        Toggle("Voice input enabled", isOn: $voiceEnabled).tint(.tactiCoreNeon)
-                        Toggle("AI voice coaching placeholder", isOn: .constant(true)).tint(.tactiCoreGold)
+                        Toggle("Voice input enabled", isOn: $voiceEnabled).tint(Color.tactiCoreNeon)
+                        Toggle("AI voice coaching placeholder", isOn: .constant(true)).tint(Color.tactiCoreGold)
                     }
 
                     settingsSection("Tactical preferences") {
@@ -50,7 +50,7 @@ struct SettingsView: View {
 
                     settingsSection("Notifications") {
                         Toggle("Training reminders", isOn: $notificationsEnabled)
-                            .tint(.tactiCoreNeon)
+                            .tint(Color.tactiCoreNeon)
                             .onChange(of: notificationsEnabled) { _, enabled in
                                 if enabled {
                                     Task {
@@ -62,8 +62,8 @@ struct SettingsView: View {
                     }
 
                     settingsSection("Theme and export") {
-                        Toggle("Cinematic theme", isOn: $cinematicTheme).tint(.tactiCoreNeon)
-                        Toggle("Premium PDF export styling", isOn: $premiumPDF).tint(.tactiCoreGold)
+                        Toggle("Cinematic theme", isOn: $cinematicTheme).tint(Color.tactiCoreNeon)
+                        Toggle("Premium PDF export styling", isOn: $premiumPDF).tint(Color.tactiCoreGold)
                     }
 
                     settingsSection("Legal and coaching") {
@@ -102,7 +102,7 @@ struct SettingsView: View {
             VStack(alignment: .leading, spacing: 12) {
                 Text(title.uppercased())
                     .font(.caption.weight(.black))
-                    .foregroundStyle(.tactiCoreNeon)
+                    .foregroundStyle(Color.tactiCoreNeon)
                 content()
             }
         }

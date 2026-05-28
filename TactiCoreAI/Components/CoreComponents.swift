@@ -231,7 +231,7 @@ struct SessionCard: View {
                             .fixedSize(horizontal: false, vertical: true)
                         Text("\(session.tacticalFocus) | \(session.formation)")
                             .font(.caption.weight(.bold))
-                            .foregroundStyle(.tactiCoreNeon)
+                            .foregroundStyle(Color.tactiCoreNeon)
                     }
                     Spacer()
                     Text("\(session.duration)m")
@@ -239,7 +239,7 @@ struct SessionCard: View {
                         .foregroundStyle(.black)
                         .padding(.horizontal, 10)
                         .padding(.vertical, 6)
-                        .background(.tactiCoreNeon, in: Capsule())
+                        .background(Color.tactiCoreNeon, in: Capsule())
                 }
                 Text(session.generatedContent)
                     .font(.subheadline)
@@ -343,7 +343,7 @@ struct UpgradeBanner: View {
             HStack(spacing: 14) {
                 Image(systemName: "crown.fill")
                     .font(.title2)
-                    .foregroundStyle(.tactiCoreGold)
+                    .foregroundStyle(Color.tactiCoreGold)
                 VStack(alignment: .leading, spacing: 4) {
                     Text(title)
                         .font(.headline.weight(.black))

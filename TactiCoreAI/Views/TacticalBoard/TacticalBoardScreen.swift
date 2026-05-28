@@ -87,10 +87,10 @@ struct TacticalBoardScreen: View {
                     ForEach(TacticalEnginePreset.allCases) { Text($0.rawValue).tag($0) }
                 }
                 .pickerStyle(.menu)
-                .tint(.tactiCoreNeon)
+                .tint(Color.tactiCoreNeon)
 
                 Toggle("Show tactical zones", isOn: $showZones)
-                    .tint(.tactiCoreNeon)
+                    .tint(Color.tactiCoreNeon)
             }
         }
     }

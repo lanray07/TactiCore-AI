@@ -62,7 +62,7 @@ private struct PaywallContent: View {
                                 .foregroundStyle(.white)
                             Text("\u{00A3}119.99 / year")
                                 .font(.title3.weight(.black))
-                                .foregroundStyle(.tactiCoreNeon)
+                                .foregroundStyle(Color.tactiCoreNeon)
                             Text("Annual placeholder product: tacticore.pro.yearly")
                                 .font(.caption)
                                 .foregroundStyle(.white.opacity(0.62))
