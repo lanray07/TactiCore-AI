@@ -136,6 +136,22 @@ jobs:
           echo "ARCHIVE_PATH=$ARCHIVE_PATH" >> "$GITHUB_ENV"
           echo "BUILD_NUMBER=$BUILD_NUMBER" >> "$GITHUB_ENV"
 
+      - name: Inject visionOS app icon plist key
+        shell: bash
+        run: |
+          set -euo pipefail
+          APP_INFO_PLIST="$(find "$ARCHIVE_PATH/Products/Applications" -name Info.plist -print -quit)"
+          if [ -z "$APP_INFO_PLIST" ]; then
+            echo "::error title=Info.plist not found::The archived visionOS app does not contain an Info.plist."
+            exit 1
+          fi
+
+          /usr/libexec/PlistBuddy -c "Delete :CFBundleIcons" "$APP_INFO_PLIST" 2>/dev/null || true
+          /usr/libexec/PlistBuddy -c "Add :CFBundleIcons dict" "$APP_INFO_PLIST"
+          /usr/libexec/PlistBuddy -c "Add :CFBundleIcons:CFBundlePrimaryIcon dict" "$APP_INFO_PLIST"
+          /usr/libexec/PlistBuddy -c "Add :CFBundleIcons:CFBundlePrimaryIcon:CFBundleIconName string AppIcon" "$APP_INFO_PLIST"
+          /usr/libexec/PlistBuddy -c "Print :CFBundleIcons" "$APP_INFO_PLIST"
+
       - name: Create visionOS export options
         shell: bash
         run: |
