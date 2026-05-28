@@ -184,8 +184,9 @@ Generated screenshot assets are available in:
 - `AppStoreConnect/Screenshots/iPad_13_Display`
 - `AppStoreConnect/Screenshots/Apple_Vision_Pro`
 - `AppStoreConnect/SubscriptionReviewScreenshots`
+- `AppStoreConnect/SubscriptionImages`
 
-The iPad set is exported at 2048 x 2732 for 13-inch iPad screenshots. The Apple Vision Pro set is exported at 3840 x 2160. Both use the app's premium humanized football imagery placeholders, including footballers, coaches, sideline officials, training-ground photography, tactical overlays, and cinematic pitch atmosphere.
+The iPad set is exported at 2048 x 2732 for 13-inch iPad screenshots. The Apple Vision Pro set is exported at 3840 x 2160. Subscription product images are exported at 1024 x 1024. All use the app's premium humanized football imagery placeholders, including footballers, coaches, sideline officials, training-ground photography, tactical overlays, and cinematic pitch atmosphere.
 
 Use screenshots that cover:
 

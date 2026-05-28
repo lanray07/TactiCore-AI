@@ -8,9 +8,11 @@ SCREENSHOT_DIR = ROOT / "Screenshots" / "iPhone_6_5_Display"
 IPAD_DIR = ROOT / "Screenshots" / "iPad_13_Display"
 VISION_DIR = ROOT / "Screenshots" / "Apple_Vision_Pro"
 SUBSCRIPTION_DIR = ROOT / "SubscriptionReviewScreenshots"
+SUBSCRIPTION_IMAGE_DIR = ROOT / "SubscriptionImages"
 W, H = 1242, 2688
 IW, IH = 2048, 2732
 VW, VH = 3840, 2160
+SW, SH = 1024, 1024
 
 
 def font(size, bold=False):
@@ -367,6 +369,123 @@ def screenshot_paywall(selected="pro-monthly"):
     rounded(d, (170, 2415, 1072, 2505), 45, (62, 255, 174, 235))
     d.text((398, 2439), "Continue", fill=(3, 20, 12), font=F["h2"])
     footer(d, "Coaching and educational tool only. Review AI recommendations.")
+    return img
+
+
+def subscription_art_background(asset_name):
+    source_map = {
+        "premium_training_officials": ROOT.parent / "TactiCoreAI" / "Resources" / "Assets.xcassets" / "premium_training_officials.imageset" / "premium_training_officials.png",
+        "premium_tactical_duel": ROOT.parent / "TactiCoreAI" / "Resources" / "Assets.xcassets" / "premium_tactical_duel.imageset" / "premium_tactical_duel.png",
+        "premium_analysis_room": ROOT.parent / "TactiCoreAI" / "Resources" / "Assets.xcassets" / "premium_analysis_room.imageset" / "premium_analysis_room.png",
+        "premium_icon_scene": ROOT.parent / "TactiCoreAI" / "Resources" / "Assets.xcassets" / "premium_icon_scene.imageset" / "premium_icon_scene.png",
+    }
+    source = source_map.get(asset_name)
+    img = Image.new("RGB", (SW, SH), "#06110d")
+    if source and source.exists():
+        photo = Image.open(source).convert("RGB")
+        scale = max(SW / photo.width, SH / photo.height)
+        resized = photo.resize((round(photo.width * scale), round(photo.height * scale)), Image.Resampling.LANCZOS)
+        left = (resized.width - SW) // 2
+        top = (resized.height - SH) // 2
+        img = resized.crop((left, top, left + SW, top + SH))
+        img = ImageEnhance.Color(img).enhance(0.86)
+        img = ImageEnhance.Contrast(img).enhance(1.14)
+        img = Image.blend(img, Image.new("RGB", (SW, SH), "#020604"), 0.34)
+
+    vignette = Image.new("L", (SW, SH), 0)
+    vd = ImageDraw.Draw(vignette)
+    vd.ellipse((-250, -180, SW + 260, SH + 220), fill=255)
+    vignette = vignette.filter(ImageFilter.GaussianBlur(90))
+    dark = Image.new("RGBA", (SW, SH), (0, 0, 0, 172))
+    return Image.composite(img.convert("RGBA"), dark, vignette)
+
+
+def subscription_pitch(draw, x0, y0, x1, y1, accent=(64, 255, 174, 180)):
+    rounded(draw, (x0, y0, x1, y1), 34, (2, 45, 27, 205), outline=accent, width=3)
+    for i in range(1, 6):
+        y = y0 + i * (y1 - y0) / 6
+        draw.line((x0 + 24, y, x1 - 24, y), fill=(205, 255, 229, 38), width=2)
+    draw.rectangle((x0 + 38, y0 + 38, x1 - 38, y1 - 38), outline=(205, 255, 229, 85), width=3)
+    mid_y = (y0 + y1) / 2
+    draw.line((x0 + 38, mid_y, x1 - 38, mid_y), fill=(205, 255, 229, 70), width=3)
+    draw.ellipse(((x0 + x1) / 2 - 86, mid_y - 86, (x0 + x1) / 2 + 86, mid_y + 86), outline=(205, 255, 229, 70), width=3)
+
+
+def subscription_marker(draw, x, y, color=(64, 255, 174), size=27):
+    glow = Image.new("RGBA", (SW, SH), (0, 0, 0, 0))
+    gd = ImageDraw.Draw(glow)
+    gd.ellipse((x - size * 2.8, y - size * 2.8, x + size * 2.8, y + size * 2.8), fill=(color[0], color[1], color[2], 34))
+    glow = glow.filter(ImageFilter.GaussianBlur(20))
+    draw.bitmap((0, 0), glow.split()[-1], fill=(color[0], color[1], color[2], 48))
+    draw.ellipse((x - size, y - size, x + size, y + size), fill=(5, 18, 13, 238), outline=color, width=5)
+
+
+def subscription_arrow(draw, p1, p2, color=(64, 255, 175, 220), width=8):
+    draw.line((p1, p2), fill=color, width=width)
+    ang = math.atan2(p2[1] - p1[1], p2[0] - p1[0])
+    for delta in (2.55, -2.55):
+        q = (p2[0] + 32 * math.cos(ang + delta), p2[1] + 32 * math.sin(ang + delta))
+        draw.line((p2, q), fill=color, width=width)
+
+
+def subscription_art_pro_monthly():
+    img = subscription_art_background("premium_training_officials")
+    d = ImageDraw.Draw(img)
+    accent = (64, 255, 174, 210)
+    subscription_pitch(d, 112, 288, 912, 814, accent)
+    for x, y in [(310, 585), (462, 496), (620, 590), (740, 455)]:
+        subscription_marker(d, x, y, (64, 255, 174))
+    subscription_arrow(d, (310, 585), (462, 496))
+    subscription_arrow(d, (462, 496), (620, 590))
+    subscription_arrow(d, (620, 590), (740, 455), (255, 214, 89, 230))
+    for r in range(330, 40, -22):
+        d.ellipse((512 - r, 512 - r, 512 + r, 512 + r), outline=(64, 255, 174, max(10, int(32 * r / 330))), width=2)
+    d.arc((260, 116, 764, 620), 210, 330, fill=(64, 255, 174, 132), width=9)
+    d.arc((308, 164, 716, 572), 214, 326, fill=(255, 214, 89, 92), width=5)
+    subscription_marker(d, 512, 198, (64, 255, 174), size=20)
+    return img
+
+
+def subscription_art_pro_yearly():
+    img = subscription_art_background("premium_analysis_room")
+    d = ImageDraw.Draw(img)
+    accent = (255, 214, 89, 210)
+    subscription_pitch(d, 124, 264, 900, 810, accent)
+    points = [(270, 632), (400, 520), (536, 606), (670, 490), (788, 590)]
+    for point in points:
+        subscription_marker(d, *point, color=(255, 214, 89), size=24)
+    for a, b in zip(points, points[1:]):
+        subscription_arrow(d, a, b, (255, 214, 89, 230), 7)
+    for i, month_x in enumerate(range(226, 820, 84)):
+        alpha = 160 if i < 7 else 70
+        rounded(d, (month_x, 146, month_x + 44, 190), 12, (255, 214, 89, alpha), outline=(255, 242, 164, 120), width=1)
+    d.arc((206, 208, 818, 820), 206, 336, fill=(255, 214, 89, 190), width=10)
+    d.arc((232, 234, 792, 794), 208, 330, fill=(64, 255, 174, 120), width=6)
+    return img
+
+
+def subscription_art_elite_club():
+    img = subscription_art_background("premium_tactical_duel")
+    d = ImageDraw.Draw(img)
+    accent = (116, 191, 255, 210)
+    subscription_pitch(d, 92, 224, 932, 842, accent)
+    clusters = [
+        [(270, 420), (370, 350), (460, 420), (350, 500)],
+        [(560, 620), (665, 550), (770, 630), (670, 720)],
+        [(610, 360), (730, 315), (822, 410)],
+    ]
+    colors = [(64, 255, 174), (116, 191, 255), (255, 214, 89)]
+    for cluster, color in zip(clusters, colors):
+        for point in cluster:
+            subscription_marker(d, *point, color=color, size=22)
+        for a, b in zip(cluster, cluster[1:]):
+            subscription_arrow(d, a, b, (*color, 215), 6)
+    for r in [390, 312, 234, 156]:
+        d.ellipse((512 - r, 512 - r, 512 + r, 512 + r), outline=(116, 191, 255, 28), width=3)
+    academy_nodes = [(268, 148), (512, 110), (756, 148)]
+    d.line((academy_nodes[0], academy_nodes[1], academy_nodes[2]), fill=(116, 191, 255, 118), width=5)
+    for point in academy_nodes:
+        subscription_marker(d, *point, color=(116, 191, 255), size=20)
     return img
 
 
@@ -941,6 +1060,7 @@ def save_all():
     IPAD_DIR.mkdir(parents=True, exist_ok=True)
     VISION_DIR.mkdir(parents=True, exist_ok=True)
     SUBSCRIPTION_DIR.mkdir(parents=True, exist_ok=True)
+    SUBSCRIPTION_IMAGE_DIR.mkdir(parents=True, exist_ok=True)
     screenshots = [
         ("01_dashboard.png", screenshot_dashboard()),
         ("02_ai_session_builder.png", screenshot_generator()),
@@ -981,6 +1101,14 @@ def save_all():
     for name, image in subscription_images:
         image.convert("RGB").save(SUBSCRIPTION_DIR / name, optimize=True)
 
+    subscription_art_images = [
+        ("pro_coach_monthly_1024.png", subscription_art_pro_monthly()),
+        ("pro_coach_yearly_1024.png", subscription_art_pro_yearly()),
+        ("elite_club_monthly_1024.png", subscription_art_elite_club()),
+    ]
+    for name, image in subscription_art_images:
+        image.convert("RGB").save(SUBSCRIPTION_IMAGE_DIR / name, optimize=True)
+
 
 if __name__ == "__main__":
     save_all()
@@ -988,3 +1116,4 @@ if __name__ == "__main__":
     print(f"Created assets in {IPAD_DIR}")
     print(f"Created assets in {VISION_DIR}")
     print(f"Created assets in {SUBSCRIPTION_DIR}")
+    print(f"Created assets in {SUBSCRIPTION_IMAGE_DIR}")
