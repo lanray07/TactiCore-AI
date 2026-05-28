@@ -60,6 +60,11 @@ final class SubscriptionStore: ObservableObject {
     func purchase(_ product: Product) async {
         isLoading = true
         defer { isLoading = false }
+
+#if os(visionOS)
+        errorMessage = "visionOS purchases are scaffolded for StoreKit configuration and review."
+        _ = product
+#else
         do {
             let result = try await product.purchase()
             switch result {
@@ -83,6 +88,7 @@ final class SubscriptionStore: ObservableObject {
         } catch {
             errorMessage = error.localizedDescription
         }
+#endif
     }
 
     func restorePurchases() async {
