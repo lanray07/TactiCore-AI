@@ -42,6 +42,7 @@
 		100000000000000000000033 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200000000000000000000033 /* SettingsView.swift */; };
 		100000000000000000000034 /* WidgetsPlaceholder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200000000000000000000034 /* WidgetsPlaceholder.swift */; };
 		100000000000000000000035 /* WatchPlaceholder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200000000000000000000035 /* WatchPlaceholder.swift */; };
+		100000000000000000000036 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 200000000000000000000036 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -81,6 +82,7 @@
 		200000000000000000000033 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TactiCoreAI/Views/Settings/SettingsView.swift; sourceTree = "<group>"; };
 		200000000000000000000034 /* WidgetsPlaceholder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TactiCoreAI/WidgetsPlaceholder/WidgetsPlaceholder.swift; sourceTree = "<group>"; };
 		200000000000000000000035 /* WatchPlaceholder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TactiCoreAI/WatchPlaceholder/WatchPlaceholder.swift; sourceTree = "<group>"; };
+		200000000000000000000036 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = TactiCoreAI/Resources/Assets.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -132,6 +134,7 @@
 				200000000000000000000033 /* SettingsView.swift */,
 				200000000000000000000034 /* WidgetsPlaceholder.swift */,
 				200000000000000000000035 /* WatchPlaceholder.swift */,
+				200000000000000000000036 /* Assets.xcassets */,
 				300000000000000000000002 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -202,6 +205,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				100000000000000000000036 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -369,6 +373,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "";
@@ -405,6 +410,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "";

@@ -1,5 +1,5 @@
 from pathlib import Path
-from PIL import Image, ImageDraw, ImageFont, ImageFilter
+from PIL import Image, ImageDraw, ImageFont, ImageFilter, ImageEnhance
 import math
 
 
@@ -38,14 +38,32 @@ def rounded(draw, box, radius, fill, outline=None, width=1):
     draw.rounded_rectangle(box, radius=radius, fill=fill, outline=outline, width=width)
 
 
-def background():
+def background(asset_name="premium_training_officials"):
+    source_map = {
+        "premium_training_officials": ROOT.parent / "TactiCoreAI" / "Resources" / "Assets.xcassets" / "premium_training_officials.imageset" / "premium_training_officials.png",
+        "premium_tactical_duel": ROOT.parent / "TactiCoreAI" / "Resources" / "Assets.xcassets" / "premium_tactical_duel.imageset" / "premium_tactical_duel.png",
+        "premium_analysis_room": ROOT.parent / "TactiCoreAI" / "Resources" / "Assets.xcassets" / "premium_analysis_room.imageset" / "premium_analysis_room.png",
+        "premium_icon_scene": ROOT.parent / "TactiCoreAI" / "Resources" / "Assets.xcassets" / "premium_icon_scene.imageset" / "premium_icon_scene.png",
+    }
     img = Image.new("RGB", (W, H), "#06110d")
-    px = img.load()
-    for y in range(H):
-        for x in range(W):
-            g = int(11 + 28 * (1 - y / H))
-            b = int(13 + 19 * (x / W))
-            px[x, y] = (3, g, b)
+    source = source_map.get(asset_name)
+    if source and source.exists():
+        photo = Image.open(source).convert("RGB")
+        scale = max(W / photo.width, H / photo.height)
+        resized = photo.resize((round(photo.width * scale), round(photo.height * scale)), Image.Resampling.LANCZOS)
+        left = (resized.width - W) // 2
+        top = (resized.height - H) // 2
+        img = resized.crop((left, top, left + W, top + H))
+        img = ImageEnhance.Color(img).enhance(0.86)
+        img = ImageEnhance.Contrast(img).enhance(1.08)
+        img = Image.blend(img, Image.new("RGB", (W, H), "#020604"), 0.36)
+    else:
+        px = img.load()
+        for y in range(H):
+            for x in range(W):
+                g = int(11 + 28 * (1 - y / H))
+                b = int(13 + 19 * (x / W))
+                px[x, y] = (3, g, b)
 
     overlay = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     d = ImageDraw.Draw(overlay)
@@ -135,7 +153,7 @@ def footer(draw, text="The modern operating system for elite football coaching."
 
 
 def screenshot_dashboard():
-    img = background()
+    img = background("premium_training_officials")
     d = ImageDraw.Draw(img)
     header(d, "Elite coaching OS")
     silhouette(d, 1030, 352, 1.25)
@@ -170,7 +188,7 @@ def screenshot_dashboard():
 
 
 def screenshot_generator():
-    img = background()
+    img = background("premium_training_officials")
     d = ImageDraw.Draw(img)
     header(d, "AI session builder")
     card(d, (74, 342, 1168, 742), "Coach Inputs")
@@ -204,7 +222,7 @@ def screenshot_generator():
 
 
 def screenshot_voice():
-    img = background()
+    img = background("premium_analysis_room")
     d = ImageDraw.Draw(img)
     header(d, "Voice coach notes")
     card(d, (74, 350, 1168, 950), "Live Transcription")
@@ -234,7 +252,7 @@ def screenshot_voice():
 
 
 def screenshot_tactical_board():
-    img = background()
+    img = background("premium_tactical_duel")
     d = ImageDraw.Draw(img)
     header(d, "Tactical board")
     pitch(d, (74, 350, 1168, 2098), "4-3-3 Pressing Pattern")
@@ -258,7 +276,7 @@ def screenshot_tactical_board():
 
 
 def screenshot_development():
-    img = background()
+    img = background("premium_tactical_duel")
     d = ImageDraw.Draw(img)
     header(d, "Player development")
     card(d, (74, 348, 1168, 795), "Development Alerts")
@@ -289,7 +307,7 @@ def screenshot_development():
 
 
 def screenshot_paywall(selected="pro-monthly"):
-    img = background()
+    img = background("premium_icon_scene")
     d = ImageDraw.Draw(img)
     header(d, "Pro coaching power")
     d.text((74, 310), "Unlock voice planning, tactical boards, animated drills and premium exports.", fill=(190, 211, 202), font=F["body"])

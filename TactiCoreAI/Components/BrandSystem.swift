@@ -43,6 +43,29 @@ struct CinematicBackground: View {
         ZStack {
             TactiCoreGradient.stadium.ignoresSafeArea()
 
+            Image(assetKind.imageName)
+                .resizable()
+                .scaledToFill()
+                .ignoresSafeArea()
+                .saturation(0.92)
+                .contrast(1.10)
+                .brightness(-0.10)
+                .overlay(
+                    LinearGradient(
+                        colors: [.black.opacity(0.18), .black.opacity(0.74), .black.opacity(0.92)],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                )
+                .overlay(
+                    LinearGradient(
+                        colors: [.black.opacity(0.78), .clear, .black.opacity(0.72)],
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                )
+                .accessibilityHidden(true)
+
             RadialGradient(
                 colors: [assetKind.accent.opacity(0.30), .clear],
                 center: .topTrailing,

@@ -7,25 +7,22 @@ struct HumanAssetView: View {
 
     var body: some View {
         ZStack(alignment: .bottomLeading) {
-            RoundedRectangle(cornerRadius: 8, style: .continuous)
-                .fill(
-                    LinearGradient(
-                        colors: [.black, .tactiCoreGreen.opacity(0.62), kind.accent.opacity(0.32)],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
-                )
-                .overlay(StadiumLightRays(accent: kind.accent).opacity(0.85))
-                .overlay(PitchHorizon(accent: kind.accent).opacity(0.70))
-                .overlay(HumanSilhouetteGroup(kind: kind).padding(.horizontal, 18).padding(.bottom, 18))
+            Image(kind.imageName)
+                .resizable()
+                .scaledToFill()
+                .saturation(0.96)
+                .contrast(1.08)
+                .brightness(-0.03)
                 .overlay(
                     RoundedRectangle(cornerRadius: 8, style: .continuous)
                         .stroke(kind.accent.opacity(0.28), lineWidth: 1)
                 )
                 .overlay(
-                    LinearGradient(colors: [.clear, .black.opacity(0.82)], startPoint: .center, endPoint: .bottom)
+                    LinearGradient(colors: [.black.opacity(0.10), .black.opacity(0.20), .black.opacity(0.88)], startPoint: .top, endPoint: .bottom)
                         .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                 )
+                .overlay(StadiumLightRays(accent: kind.accent).opacity(0.36))
+                .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(kind.title)

@@ -15,42 +15,63 @@ enum HumanAssetKind: String, CaseIterable, Identifiable {
     var title: String {
         switch self {
         case .eliteCoach:
-            return "Elite Coach Placeholder"
+            return "Touchline leadership"
         case .trainingGround:
-            return "Training Ground Photography Placeholder"
+            return "Floodlit training ground"
         case .footballerAction:
-            return "Explosive Footballer Action Placeholder"
+            return "Explosive player action"
         case .tacticalDuel:
-            return "Tactical Duel Scene Placeholder"
+            return "Pressing duel"
         case .playerSilhouette:
-            return "Premium Player Silhouette Placeholder"
+            return "Player development focus"
         case .stadiumTunnel:
-            return "Stadium Tunnel Atmosphere Placeholder"
+            return "Elite matchday atmosphere"
         case .recoveryCircle:
-            return "Human Recovery Circle Placeholder"
+            return "Team reflection"
         case .matchAnalysis:
-            return "Analyst Reviewing Match Placeholder"
+            return "Analysis room"
         }
     }
 
     var subtitle: String {
         switch self {
         case .eliteCoach:
-            return "Coach profile, sideline emotion, leadership"
+            return "Coach, assistant official, and tactical control"
         case .trainingGround:
-            return "Floodlit pitch, cones, players in motion"
+            return "Players, staff, cones, tablets, and session detail"
         case .footballerAction:
-            return "Sprint, press, first touch, contact"
+            return "Sprint, press, first touch, and decision speed"
         case .tacticalDuel:
-            return "1v1 pressure moment with tactical overlay"
+            return "1v1 pressure moment with tactical movement"
         case .playerSilhouette:
-            return "Anonymous player identity for squads"
+            return "Anonymous footballer imagery for squads"
         case .stadiumTunnel:
-            return "Pre-session cinematic focus"
+            return "Footballer and coach under stadium floodlights"
         case .recoveryCircle:
-            return "Team reflection and recovery"
+            return "Coach-led review, recovery, and planning"
         case .matchAnalysis:
-            return "Video-room analysis and decision making"
+            return "Analysts and officials reviewing match patterns"
+        }
+    }
+
+    var imageName: String {
+        switch self {
+        case .eliteCoach:
+            return "premium_training_officials"
+        case .trainingGround:
+            return "premium_training_officials"
+        case .footballerAction:
+            return "premium_tactical_duel"
+        case .tacticalDuel:
+            return "premium_tactical_duel"
+        case .playerSilhouette:
+            return "premium_tactical_duel"
+        case .stadiumTunnel:
+            return "premium_icon_scene"
+        case .recoveryCircle:
+            return "premium_training_officials"
+        case .matchAnalysis:
+            return "premium_analysis_room"
         }
     }
 
