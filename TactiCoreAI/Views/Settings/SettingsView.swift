@@ -67,8 +67,12 @@ struct SettingsView: View {
                     }
 
                     settingsSection("Legal and coaching") {
-                        row("Privacy policy placeholder", "lock.shield.fill", .tactiCoreBlue)
-                        row("Terms of use placeholder", "doc.text.fill", .tactiCoreBlue)
+                        Link(destination: URL(string: "https://github.com/lanray07/TactiCore-AI/blob/main/AppStoreConnect/PRIVACY_POLICY.md")!) {
+                            row("Privacy Policy", "lock.shield.fill", .tactiCoreBlue)
+                        }
+                        Link(destination: URL(string: "https://github.com/lanray07/TactiCore-AI/blob/main/AppStoreConnect/TERMS_OF_USE.md")!) {
+                            row("Terms of Use", "doc.text.fill", .tactiCoreBlue)
+                        }
                         TacticalInsightCard(insight: CoachingInsight(title: "Coaching Disclaimer", detail: CoachingDisclaimer.full, tag: "Required"), accent: .tactiCoreGold)
                     }
 

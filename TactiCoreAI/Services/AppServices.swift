@@ -49,20 +49,29 @@ final class SubscriptionStore: ObservableObject {
 
     func loadProducts() async {
         isLoading = true
+        errorMessage = nil
         defer { isLoading = false }
         do {
-            products = try await Product.products(for: Self.productIDs)
+            let loadedProducts = try await Product.products(for: Self.productIDs)
+            products = loadedProducts.sorted { lhs, rhs in
+                (Self.productIDs.firstIndex(of: lhs.id) ?? .max) < (Self.productIDs.firstIndex(of: rhs.id) ?? .max)
+            }
         } catch {
-            errorMessage = "StoreKit products are placeholders until App Store Connect is configured."
+            products = []
+            errorMessage = "Subscriptions are temporarily unavailable. Please try again in a moment."
         }
+    }
+
+    func product(for identifier: String) -> Product? {
+        products.first { $0.id == identifier }
     }
 
     func purchase(_ product: Product) async {
         isLoading = true
+        errorMessage = nil
         defer { isLoading = false }
 
 #if os(visionOS)
-        errorMessage = "visionOS purchases are scaffolded for StoreKit configuration and review."
         _ = product
 #else
         do {

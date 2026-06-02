@@ -9,7 +9,7 @@ Use this as the source of truth when filling App Store Connect for the first iOS
 | Platform | iOS |
 | Name | TactiCore AI |
 | Primary language | English (U.K.) |
-| Bundle ID | com.tacticore.ai |
+| Bundle ID | com.tacticoreai.app |
 | SKU | TACTICORE-AI-IOS-001 |
 | User Access | Full Access |
 
@@ -22,7 +22,7 @@ Use this as the source of truth when filling App Store Connect for the first iOS
 | Secondary Category | Education |
 | Content Rights | Yes, the app only includes original UI, original text, generated placeholder visuals, and no third-party club, league, player, or broadcast marks. |
 | Age Category | Not Made for Kids |
-| Privacy Policy URL | TODO: use a public URL for `AppStoreConnect/PRIVACY_POLICY.md` before submitting. |
+| Privacy Policy URL | https://github.com/lanray07/TactiCore-AI/blob/main/AppStoreConnect/PRIVACY_POLICY.md |
 
 ## iOS Version 1.0 Metadata
 
@@ -53,13 +53,16 @@ TactiCore AI is designed to help coaches prepare more clearly, communicate more 
 
 Important: TactiCore AI is a coaching and educational planning tool only. It is not medical advice, sports science advice, safeguarding advice, scouting certification or a guarantee of player outcomes. Coaches should review all AI recommendations and adapt them to their players, environment and club policies.
 
+Privacy Policy: https://github.com/lanray07/TactiCore-AI/blob/main/AppStoreConnect/PRIVACY_POLICY.md
+Terms of Use: https://github.com/lanray07/TactiCore-AI/blob/main/AppStoreConnect/TERMS_OF_USE.md
+
 ### Keywords
 
 football,coaching,soccer,training,tactics,drills,academy,coach,analysis,players
 
 ### Support URL
 
-TODO: use a public support page before submitting. Recommended fallback: a public GitHub `SUPPORT.md` page or a dedicated website with contact details.
+https://github.com/lanray07/TactiCore-AI/blob/main/AppStoreConnect/SUPPORT.md
 
 ### Marketing URL
 
@@ -90,11 +93,13 @@ TactiCore AI runs with mock AI enabled by default and does not require an API ke
 
 The app uses SwiftData for offline local persistence. Voice notes require microphone and speech-recognition permissions; these are optional and only needed when testing the Voice Coach Notes feature. The remote AI endpoint is a placeholder and is not required for the default review flow.
 
-Subscriptions are scaffolded with StoreKit 2. The paywall includes mock activation controls for local testing, and App Store Connect subscription product IDs should match:
+Subscriptions use StoreKit 2 product identifiers configured in App Store Connect. The paywall loads products automatically and shows the required subscription title, duration, price, unit price, auto-renewal disclosure, Privacy Policy link, and Terms of Use link. App Store Connect subscription product IDs should match:
 
 - tacticore.pro.monthly
 - tacticore.pro.yearly
 - tacticore.elite.monthly
+
+Please review the three submitted auto-renewable subscription products together with this app version.
 
 The app includes a coaching disclaimer in onboarding, settings, AI assistant and PDF export flows. AI recommendations are presented as educational coaching support only and do not claim medical, sports science, scouting or guaranteed performance outcomes.
 
@@ -175,6 +180,14 @@ Products:
 | Elite Club Monthly | tacticore.elite.monthly | 1 Month | GBP 49.99 | Level 1 | Elite Club Monthly | Club-level coaching OS monthly |
 
 Set Elite Club as the higher level than Pro Coach because it includes the broader club and academy placeholder feature set.
+
+For resubmission after the June 2, 2026 rejection:
+
+- Confirm all three subscription products have complete localized display names, descriptions, prices, review screenshots, and availability.
+- Submit the subscriptions with the app version from the In-App Purchases and Subscriptions section before pressing Resubmit to App Review.
+- Put the Privacy Policy URL in the App Information Privacy Policy URL field.
+- Include the Terms of Use URL in the app description or EULA field.
+- Add a review note: "This build updates the paywall to remove mock activation controls, automatically load StoreKit products, include required subscription disclosures, and provide functional Privacy Policy and Terms of Use links inside the app and metadata."
 
 ## App Store Review Attachments
 
